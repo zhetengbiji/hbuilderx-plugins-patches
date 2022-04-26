@@ -1,0 +1,30 @@
+diff --git a/node_modules/@dcloudio/uni-template-compiler/lib/script/traverse/visitor.js b/node_modules/@dcloudio/uni-template-compiler/lib/script/traverse/visitor.js
+index 08f3bd4..3480728 100644
+--- a/node_modules/@dcloudio/uni-template-compiler/lib/script/traverse/visitor.js
++++ b/node_modules/@dcloudio/uni-template-compiler/lib/script/traverse/visitor.js
+@@ -216,7 +216,11 @@ module.exports = {
+               // event
+               return path.skip()
+             }
+-            path = path.findParent((path) => path.isLogicalExpression()) || path
++            let newPath = path
++            while (newPath) {
++              path = newPath
++              newPath = path.findParent((path) => path.isLogicalExpression())
++            }
+             path.skip()
+             if (path.findParent((path) => path.shouldSkip)) {
+               return
+@@ -251,7 +255,11 @@ module.exports = {
+       t.isMemberExpression(callee) // message.split('').reverse().join('')
+     ) {
+       // Object.assign...
+-      path = path.findParent((path) => path.isLogicalExpression()) || path
++      let newPath = path
++      while (newPath) {
++        path = newPath
++        newPath = path.findParent((path) => path.isLogicalExpression())
++      }
+       path.skip()
+       if (path.findParent((path) => path.shouldSkip)) {
+         return
