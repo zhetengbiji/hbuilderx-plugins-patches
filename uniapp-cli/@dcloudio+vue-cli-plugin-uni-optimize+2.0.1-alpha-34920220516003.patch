@@ -1,0 +1,13 @@
+diff --git a/node_modules/@dcloudio/vue-cli-plugin-uni-optimize/packages/webpack-optimize-plugin/component.js b/node_modules/@dcloudio/vue-cli-plugin-uni-optimize/packages/webpack-optimize-plugin/component.js
+index c90410c..10446ce 100644
+--- a/node_modules/@dcloudio/vue-cli-plugin-uni-optimize/packages/webpack-optimize-plugin/component.js
++++ b/node_modules/@dcloudio/vue-cli-plugin-uni-optimize/packages/webpack-optimize-plugin/component.js
+@@ -6,7 +6,7 @@ const {
+   capitalize
+ } = require('./util')
+ 
+-const platformTags = ['map', 'video', 'web-view', 'cover-view', 'cover-image', 'picker', 'ad']
++const platformTags = ['map', 'video', 'web-view', 'cover-view', 'cover-image', 'picker', 'ad', 'view']
+ 
+ const autoloadTags = {
+   // input 在 pageHead 中有使用，resize-sensor 在很多组件中有使用，暂时直接加载
