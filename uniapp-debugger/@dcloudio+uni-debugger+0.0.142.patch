@@ -1,0 +1,499 @@
+diff --git a/node_modules/@dcloudio/uni-debugger/CHANGELOG.md b/node_modules/@dcloudio/uni-debugger/CHANGELOG.md
+deleted file mode 100644
+index 61b59e1..0000000
+--- a/node_modules/@dcloudio/uni-debugger/CHANGELOG.md
++++ /dev/null
+@@ -1,38 +0,0 @@
+-node bin/debug.js debug --port 8090 --channelid 123 --remote-debug-port 9225
+-
+-package.json
+-bin/debug.js
+-src/util/wrapper.js
+-src/link/handlers/native.js
+-frontend/src/langs/en.ts
+-frontend/src/langs/cn.ts
+-frontend/runtime/index.js
+-frontend/runtime/Runtime.iOS.js
+-frontend/runtime/Runtime.Android.js
+-
+-//breakpoint
+-将指定 js 文件放入 blackbox
+-frontend/src/assets/inspector/bindings/BlackboxManager.js
+-    patterns.push('js\-framework\.js$')
+-    patterns.push('app\-service\.js$')
+-frontent/src/assets/inspector/sources/FilteredUISourceCodeListProvider.js
+-frontent/src/assets/inspector/sources/NavigatorView.js
+-frontent/src/assets/inspector/network/NetworkLogView.js
+-
+-frontent/src/assets/inspector/components/Linkifier.js
+-
+-
+-其他 Weex => Nvue,隐藏元素
+-frontend/runtime/runtime.html
+-frontend/src/index.html
+-frontend/src/components/navbar/navbar.html
+-frontend/src/views/home/home.ts
+-frontend/src/lang.ts
+-frontend/src/util/env.js
+-
+-
+-
+-
+-src/assets/inspector/shell.json  memory { "name": "profiler" } 
+-
+-src/assets/inspector/devtools_app.json network { "name": "network" }
+\ No newline at end of file
+diff --git a/node_modules/@dcloudio/uni-debugger/frontend/README.md b/node_modules/@dcloudio/uni-debugger/frontend/README.md
+deleted file mode 100644
+index ace5cab..0000000
+--- a/node_modules/@dcloudio/uni-debugger/frontend/README.md
++++ /dev/null
+@@ -1,37 +0,0 @@
+-# weex-debugger-fe
+-
+-> A Vue.js project
+-
+-## Build Setup
+-
+-``` bash
+-# install dependencies
+-npm install
+-
+-# serve with hot reload at localhost:8080
+-npm run dev
+-
+-# lint the Typescript
+-npm run lint
+-
+-# run the tests
+-npm test
+-
+-# run the tests on changes
+-npm run test:watch
+-
+-# run the test suite and generate a coverage report
+-npm run coverage
+-
+-# run the tests on Teamcity
+-npm run ci:teamcity
+-
+-# run the tests on Jenkins
+-npm run ci:jenkins
+-
+-# build for production with minification
+-npm run build
+-
+-# clean the production build
+-npm run clean
+-```
+diff --git a/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/elements/DOMLinkifier.js b/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/elements/DOMLinkifier.js
+index b6d3cc5..481b294 100644
+--- a/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/elements/DOMLinkifier.js
++++ b/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/elements/DOMLinkifier.js
+@@ -89,7 +89,7 @@ Elements.DOMLinkifier.linkifyDeferredNodeReference = function(deferredNode) {
+   const root = createElement('div');
+   const shadowRoot = UI.createShadowRootWithCoreStyles(root, 'elements/domLinkifier.css');
+   const link = shadowRoot.createChild('div', 'node-link');
+-  link.createChild('content');
++  link.createChild('slot');
+   link.addEventListener('click', deferredNode.resolve.bind(deferredNode, onDeferredNodeResolved), false);
+   link.addEventListener('mousedown', e => e.consume(), false);
+ 
+diff --git a/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/elements/DOMLinkifier.js.gz b/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/elements/DOMLinkifier.js.gz
+deleted file mode 100644
+index 04f811e..0000000
+Binary files a/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/elements/DOMLinkifier.js.gz and /dev/null differ
+diff --git a/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/emulation/DeviceModeView.js b/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/emulation/DeviceModeView.js
+index e77cf26..144a61b 100644
+--- a/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/emulation/DeviceModeView.js
++++ b/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/emulation/DeviceModeView.js
+@@ -74,7 +74,7 @@ Emulation.DeviceModeView = class extends UI.VBox {
+     this._bottomResizerElement.title = Common.UIString('Double-click for full height');
+ 
+     this._pageArea = this._screenArea.createChild('div', 'device-mode-page-area');
+-    this._pageArea.createChild('content');
++    this._pageArea.createChild('slot');
+   }
+ 
+   _populatePresetsContainer() {
+diff --git a/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/emulation/DeviceModeView.js.gz b/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/emulation/DeviceModeView.js.gz
+deleted file mode 100644
+index 12824e2..0000000
+Binary files a/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/emulation/DeviceModeView.js.gz and /dev/null differ
+diff --git a/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/inline_editor/ColorSwatch.js b/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/inline_editor/ColorSwatch.js
+index 5f5eb0b..67cb2b9 100644
+--- a/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/inline_editor/ColorSwatch.js
++++ b/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/inline_editor/ColorSwatch.js
+@@ -146,7 +146,7 @@ InlineEditor.ColorSwatch = class extends HTMLSpanElement {
+     this._swatchInner.addEventListener('mousedown', e => e.consume(), false);
+     this._swatchInner.addEventListener('click', this._handleClick.bind(this), true);
+ 
+-    root.createChild('content');
++    root.createChild('slot');
+     this._colorValueElement = this.createChild('span');
+   }
+ 
+@@ -219,7 +219,7 @@ InlineEditor.BezierSwatch = class extends HTMLSpanElement {
+     this._iconElement = UI.Icon.create('smallicon-bezier', 'bezier-swatch-icon');
+     root.appendChild(this._iconElement);
+     this._textElement = this.createChild('span');
+-    root.createChild('content');
++    root.createChild('slot');
+   }
+ };
+ 
+@@ -298,7 +298,7 @@ InlineEditor.CSSShadowSwatch = class extends HTMLSpanElement {
+     const root = UI.createShadowRootWithCoreStyles(this, 'inline_editor/cssShadowSwatch.css');
+     this._iconElement = UI.Icon.create('smallicon-shadow', 'shadow-swatch-icon');
+     root.appendChild(this._iconElement);
+-    root.createChild('content');
++    root.createChild('slot');
+     this._contentElement = this.createChild('span');
+   }
+ };
+diff --git a/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/inline_editor/ColorSwatch.js.gz b/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/inline_editor/ColorSwatch.js.gz
+deleted file mode 100644
+index 8210efa..0000000
+Binary files a/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/inline_editor/ColorSwatch.js.gz and /dev/null differ
+diff --git a/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/object_ui/ObjectPropertiesSection.js b/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/object_ui/ObjectPropertiesSection.js
+index 88a7f85..5cdc53f 100644
+--- a/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/object_ui/ObjectPropertiesSection.js
++++ b/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/object_ui/ObjectPropertiesSection.js
+@@ -426,7 +426,7 @@ ObjectUI.ObjectPropertiesSection.RootElement = class extends UI.TreeElement {
+    * @param {!Array.<!SDK.RemoteObjectProperty>=} extraProperties
+    */
+   constructor(object, linkifier, emptyPlaceholder, ignoreHasOwnProperty, extraProperties) {
+-    const contentElement = createElement('content');
++    const contentElement = createElement('slot');
+     super(contentElement);
+ 
+     this._object = object;
+diff --git a/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/object_ui/ObjectPropertiesSection.js.gz b/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/object_ui/ObjectPropertiesSection.js.gz
+deleted file mode 100644
+index 5537d23..0000000
+Binary files a/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/object_ui/ObjectPropertiesSection.js.gz and /dev/null differ
+diff --git a/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/ui/SearchableView.js b/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/ui/SearchableView.js
+index a0fa78f..f03af0f 100644
+--- a/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/ui/SearchableView.js
++++ b/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/ui/SearchableView.js
+@@ -46,7 +46,7 @@ UI.SearchableView = class extends UI.VBox {
+     this._setting = settingName ? Common.settings.createSetting(settingName, {}) : null;
+     this._replaceable = false;
+ 
+-    this.contentElement.createChild('content');
++    this.contentElement.createChild('slot');
+     this._footerElementContainer = this.contentElement.createChild('div', 'search-bar hidden');
+     this._footerElementContainer.style.order = 100;
+     this._footerElement = this._footerElementContainer.createChild('div', 'toolbar-search');
+diff --git a/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/ui/SearchableView.js.gz b/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/ui/SearchableView.js.gz
+deleted file mode 100644
+index 59f8d62..0000000
+Binary files a/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/ui/SearchableView.js.gz and /dev/null differ
+diff --git a/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/ui/SoftDropDown.js b/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/ui/SoftDropDown.js
+index 88e8e97..af9f913 100644
+--- a/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/ui/SoftDropDown.js
++++ b/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/ui/SoftDropDown.js
+@@ -15,7 +15,7 @@ UI.SoftDropDown = class {
+     this._selectedItem = null;
+     this._model = model;
+ 
+-    this.element = createElementWithClass('button', 'soft-dropdown');
++    this.element = createElementWithClass('div', 'soft-dropdown');
+     const shadowRoot = UI.createShadowRootWithCoreStyles(this.element, 'ui/softDropDownButton.css');
+     this._titleElement = shadowRoot.createChild('span', 'title');
+     const dropdownArrowIcon = UI.Icon.create('smallicon-triangle-down');
+diff --git a/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/ui/SoftDropDown.js.gz b/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/ui/SoftDropDown.js.gz
+deleted file mode 100644
+index 26c5147..0000000
+Binary files a/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/ui/SoftDropDown.js.gz and /dev/null differ
+diff --git a/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/ui/SplitWidget.js b/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/ui/SplitWidget.js
+index f0b55ed..6fad39a 100644
+--- a/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/ui/SplitWidget.js
++++ b/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/ui/SplitWidget.js
+@@ -46,10 +46,10 @@ UI.SplitWidget = class extends UI.Widget {
+     this.contentElement.classList.add('shadow-split-widget');
+     this._mainElement =
+         this.contentElement.createChild('div', 'shadow-split-widget-contents shadow-split-widget-main vbox');
+-    this._mainElement.createChild('content').select = '.insertion-point-main';
++    this._mainElement.createChild('slot').name = 'insertion-point-main';
+     this._sidebarElement =
+         this.contentElement.createChild('div', 'shadow-split-widget-contents shadow-split-widget-sidebar vbox');
+-    this._sidebarElement.createChild('content').select = '.insertion-point-sidebar';
++    this._sidebarElement.createChild('slot').name = 'insertion-point-sidebar';
+     this._resizerElement = this.contentElement.createChild('div', 'shadow-split-widget-resizer');
+     this._resizerElementSize = null;
+ 
+@@ -166,6 +166,7 @@ UI.SplitWidget = class extends UI.Widget {
+     this._mainWidget = widget;
+     if (widget) {
+       widget.element.classList.add('insertion-point-main');
++      widget.element.slot = 'insertion-point-main';
+       widget.element.classList.remove('insertion-point-sidebar');
+       if (this._showMode === UI.SplitWidget.ShowMode.OnlyMain || this._showMode === UI.SplitWidget.ShowMode.Both)
+         widget.show(this.element);
+@@ -185,6 +186,7 @@ UI.SplitWidget = class extends UI.Widget {
+     this._sidebarWidget = widget;
+     if (widget) {
+       widget.element.classList.add('insertion-point-sidebar');
++      widget.element.slot = 'insertion-point-sidebar'
+       widget.element.classList.remove('insertion-point-main');
+       if (this._showMode === UI.SplitWidget.ShowMode.OnlySidebar || this._showMode === UI.SplitWidget.ShowMode.Both)
+         widget.show(this.element);
+diff --git a/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/ui/SplitWidget.js.gz b/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/ui/SplitWidget.js.gz
+deleted file mode 100644
+index 9f2c24d..0000000
+Binary files a/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/ui/SplitWidget.js.gz and /dev/null differ
+diff --git a/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/ui/TabbedPane.js b/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/ui/TabbedPane.js
+index 44db82d..dfad749 100644
+--- a/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/ui/TabbedPane.js
++++ b/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/ui/TabbedPane.js
+@@ -46,7 +46,7 @@ UI.TabbedPane = class extends UI.VBox {
+     this._tabsElement.addEventListener('keydown', this._keyDown.bind(this), false);
+     this._contentElement = this.contentElement.createChild('div', 'tabbed-pane-content');
+     this._contentElement.setAttribute('role', 'tabpanel');
+-    this._contentElement.createChild('content');
++    this._contentElement.createChild('slot');
+     /** @type {!Array.<!UI.TabbedPaneTab>} */
+     this._tabs = [];
+     /** @type {!Array.<!UI.TabbedPaneTab>} */
+diff --git a/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/ui/TabbedPane.js.gz b/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/ui/TabbedPane.js.gz
+deleted file mode 100644
+index 8cee801..0000000
+Binary files a/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/ui/TabbedPane.js.gz and /dev/null differ
+diff --git a/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/ui/TextPrompt.js b/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/ui/TextPrompt.js
+index 30f5e79..9a83ec4 100644
+--- a/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/ui/TextPrompt.js
++++ b/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/ui/TextPrompt.js
+@@ -112,7 +112,7 @@ UI.TextPrompt = class extends Common.Object {
+     this._proxyElement = element.ownerDocument.createElement('span');
+     const shadowRoot = UI.createShadowRootWithCoreStyles(this._proxyElement, 'ui/textPrompt.css');
+     this._contentElement = shadowRoot.createChild('div', 'text-prompt-root');
+-    this._contentElement.createChild('content');
++    this._contentElement.createChild('slot');
+     this._proxyElement.style.display = this._proxyElementDisplay;
+     element.parentElement.insertBefore(this._proxyElement, element);
+     this._proxyElement.appendChild(element);
+diff --git a/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/ui/TextPrompt.js.gz b/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/ui/TextPrompt.js.gz
+deleted file mode 100644
+index 28427a7..0000000
+Binary files a/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/ui/TextPrompt.js.gz and /dev/null differ
+diff --git a/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/ui/Toolbar.js b/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/ui/Toolbar.js
+index 73cd266..a990746 100644
+--- a/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/ui/Toolbar.js
++++ b/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/ui/Toolbar.js
+@@ -45,7 +45,7 @@ UI.Toolbar = class {
+     this._enabled = true;
+     this._shadowRoot = UI.createShadowRootWithCoreStyles(this.element, 'ui/toolbar.css');
+     this._contentElement = this._shadowRoot.createChild('div', 'toolbar-shadow');
+-    this._insertionPoint = this._contentElement.createChild('content');
++    this._insertionPoint = this._contentElement.createChild('slot');
+   }
+ 
+   /**
+@@ -265,7 +265,7 @@ UI.Toolbar = class {
+       delete item._toolbar;
+     this._items = [];
+     this._contentElement.removeChildren();
+-    this._insertionPoint = this._contentElement.createChild('content');
++    this._insertionPoint = this._contentElement.createChild('slot');
+   }
+ 
+   /**
+diff --git a/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/ui/Toolbar.js.gz b/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/ui/Toolbar.js.gz
+deleted file mode 100644
+index 61ecb1e..0000000
+Binary files a/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/ui/Toolbar.js.gz and /dev/null differ
+diff --git a/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/ui/UIUtils.js b/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/ui/UIUtils.js
+index 9c2761c..77d68bf 100644
+--- a/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/ui/UIUtils.js
++++ b/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/ui/UIUtils.js
+@@ -707,7 +707,7 @@ UI.measuredScrollbarWidth = function(document) {
+  * @return {!DocumentFragment}
+  */
+ UI.createShadowRootWithCoreStyles = function(element, cssFile) {
+-  const shadowRoot = element.createShadowRoot();
++  const shadowRoot = element.attachShadow({ mode: 'open' });
+   UI.appendStyle(shadowRoot, 'ui/inspectorCommon.css');
+   UI.themeSupport.injectHighlightStyleSheets(shadowRoot);
+   UI.themeSupport.injectCustomStyleSheets(shadowRoot);
+@@ -1163,6 +1163,7 @@ UI.beautifyFunctionName = function(name) {
+   return name || Common.UIString('(anonymous)');
+ };
+ 
++var customElements = {}
+ /**
+  * @param {string} localName
+  * @param {string} typeExtension
+@@ -1172,7 +1173,51 @@ UI.beautifyFunctionName = function(name) {
+  * @template T
+  */
+ UI.registerCustomElement = function(localName, typeExtension, prototype) {
+-  return document.registerElement(typeExtension, {prototype: Object.create(prototype), extends: localName});
++  if (document.registerElement) {
++    return document.registerElement(typeExtension, { prototype: Object.create(prototype), extends: localName });
++  } else {
++    customElements[typeExtension] = {
++      name: localName,
++      prototype: prototype
++    }
++    function ElementConstructor () {
++      const element = document.createElement(typeExtension)
++      return element
++    }
++    Object.defineProperty(ElementConstructor.prototype = prototype, 'constructor', {
++      value: ElementConstructor
++    })
++    if (!document.__createElement) {
++      document.__createElement = document.createElement
++      Object.defineProperty(document, 'createElement', {
++        configurable: true,
++        value: function value (name, options) {
++          var is = (options && options.is) || name
++          var info = customElements[is]
++          var element = document.__createElement(info ? info.name : is)
++          if (info) {
++            Object.setPrototypeOf(element, info.prototype)
++            element.setAttribute('is', is)
++          }
++          if (typeof element.createdCallback === 'function') {
++            element.createdCallback()
++          }
++          element.__setAttribute = element.setAttribute
++          element.setAttribute = function(key, val) {
++            if (typeof element.attributeChangedCallback === 'function') {
++              var odlVal = element.getAttribute(key)
++              element.__setAttribute(key, val)
++              element.attributeChangedCallback(key, odlVal, val)
++            } else {
++              element.__setAttribute(key, val)
++            }
++          }
++          return element
++        }
++      })
++    }
++    return ElementConstructor
++  }
+ };
+ 
+ /**
+@@ -1297,7 +1342,7 @@ UI.CheckboxLabel = class extends HTMLLabelElement {
+     this.checkboxElement.setAttribute('id', id);
+     this.textElement = this._shadowRoot.createChild('label', 'dt-checkbox-text');
+     this.textElement.setAttribute('for', id);
+-    this._shadowRoot.createChild('content');
++    this._shadowRoot.createChild('slot');
+   }
+ 
+   /**
+@@ -1308,7 +1353,7 @@ UI.CheckboxLabel = class extends HTMLLabelElement {
+    */
+   static create(title, checked, subtitle) {
+     if (!UI.CheckboxLabel._constructor)
+-      UI.CheckboxLabel._constructor = UI.registerCustomElement('label', 'dt-checkbox', UI.CheckboxLabel.prototype);
++      UI.CheckboxLabel._constructor = UI.registerCustomElement('span', 'dt-checkbox', UI.CheckboxLabel.prototype);
+     const element = /** @type {!UI.CheckboxLabel} */ (new UI.CheckboxLabel._constructor());
+     element.checkboxElement.checked = !!checked;
+     if (title !== undefined) {
+@@ -1350,29 +1395,30 @@ UI.CheckboxLabel = class extends HTMLLabelElement {
+ };
+ 
+ (function() {
+-  UI.registerCustomElement('button', 'text-button', {
++  UI.registerCustomElement('div', 'text-button', {
+     /**
+      * @this {Element}
+      */
+     createdCallback: function() {
+       this.type = 'button';
+       const root = UI.createShadowRootWithCoreStyles(this, 'ui/textButton.css');
+-      root.createChild('content');
++      root.createChild('slot');
+     },
+ 
+     __proto__: HTMLButtonElement.prototype
+   });
+ 
+-  UI.registerCustomElement('label', 'dt-radio', {
++  UI.registerCustomElement('span', 'dt-radio', {
+     /**
+      * @this {Element}
+      */
+     createdCallback: function() {
+       this.radioElement = this.createChild('input', 'dt-radio-button');
++      this.radioElement.slot = 'dt-radio-button';
+       this.radioElement.type = 'radio';
+       const root = UI.createShadowRootWithCoreStyles(this, 'ui/radioButton.css');
+-      root.createChild('content').select = '.dt-radio-button';
+-      root.createChild('content');
++      root.createChild('slot').name = 'dt-radio-button';
++      root.createChild('slot');
+       this.addEventListener('click', radioClickHandler, false);
+     },
+ 
+@@ -1391,7 +1437,7 @@ UI.CheckboxLabel = class extends HTMLLabelElement {
+     this.radioElement.dispatchEvent(new Event('change'));
+   }
+ 
+-  UI.registerCustomElement('label', 'dt-icon-label', {
++  UI.registerCustomElement('span', 'dt-icon-label', {
+     /**
+      * @this {Element}
+      */
+@@ -1400,7 +1446,7 @@ UI.CheckboxLabel = class extends HTMLLabelElement {
+       this._iconElement = UI.Icon.create();
+       this._iconElement.style.setProperty('margin-right', '4px');
+       root.appendChild(this._iconElement);
+-      root.createChild('content');
++      root.createChild('slot');
+     },
+ 
+     /**
+@@ -1414,7 +1460,7 @@ UI.CheckboxLabel = class extends HTMLLabelElement {
+     __proto__: HTMLLabelElement.prototype
+   });
+ 
+-  UI.registerCustomElement('label', 'dt-slider', {
++  UI.registerCustomElement('span', 'dt-slider', {
+     /**
+      * @this {Element}
+      */
+@@ -1443,7 +1489,7 @@ UI.CheckboxLabel = class extends HTMLLabelElement {
+     __proto__: HTMLLabelElement.prototype
+   });
+ 
+-  UI.registerCustomElement('label', 'dt-small-bubble', {
++  UI.registerCustomElement('span', 'dt-small-bubble', {
+     /**
+      * @this {Element}
+      */
+@@ -1451,7 +1497,7 @@ UI.CheckboxLabel = class extends HTMLLabelElement {
+       const root = UI.createShadowRootWithCoreStyles(this, 'ui/smallBubble.css');
+       this._textElement = root.createChild('div');
+       this._textElement.className = 'info';
+-      this._textElement.createChild('content');
++      this._textElement.createChild('slot');
+     },
+ 
+     /**
+diff --git a/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/ui/UIUtils.js.gz b/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/ui/UIUtils.js.gz
+deleted file mode 100644
+index e4ceb00..0000000
+Binary files a/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/ui/UIUtils.js.gz and /dev/null differ
+diff --git a/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/ui/View.js b/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/ui/View.js
+index bc3d3be..96a784c 100644
+--- a/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/ui/View.js
++++ b/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/ui/View.js
+@@ -506,7 +506,7 @@ UI.ViewManager._ExpandableContainerWidget = class extends UI.VBox {
+     this._titleElement.addEventListener('keydown', this._onTitleKeyDown.bind(this), false);
+     this.contentElement.insertBefore(this._titleElement, this.contentElement.firstChild);
+ 
+-    this.contentElement.createChild('content');
++    this.contentElement.createChild('slot');
+     this._view = view;
+     view[UI.ViewManager._ExpandableContainerWidget._symbol] = this;
+   }
+diff --git a/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/ui/View.js.gz b/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/ui/View.js.gz
+deleted file mode 100644
+index deec9a1..0000000
+Binary files a/node_modules/@dcloudio/uni-debugger/frontend/public/assets/inspector/ui/View.js.gz and /dev/null differ
