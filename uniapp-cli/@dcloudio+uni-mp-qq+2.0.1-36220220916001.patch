@@ -1,0 +1,15 @@
+diff --git a/node_modules/@dcloudio/uni-mp-qq/dist/index.js b/node_modules/@dcloudio/uni-mp-qq/dist/index.js
+index 6b20c34..edf2781 100644
+--- a/node_modules/@dcloudio/uni-mp-qq/dist/index.js
++++ b/node_modules/@dcloudio/uni-mp-qq/dist/index.js
+@@ -2514,7 +2514,9 @@ function parseBasePage (vuePageOptions, {
+     this.$vm.$mp.query = query; // 兼容 mpvue
+     this.$vm.__call_hook('onLoad', query);
+   };
+-  initUnknownHooks(pageOptions.methods, vuePageOptions, ['onReady']);
++  {
++    initUnknownHooks(pageOptions.methods, vuePageOptions, ['onReady']);
++  }
+ 
+   return pageOptions
+ }
