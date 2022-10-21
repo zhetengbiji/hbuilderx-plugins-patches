@@ -1,0 +1,38 @@
+diff --git a/node_modules/@dcloudio/uni-app-vite/dist/nvue/plugins/esbuild.js b/node_modules/@dcloudio/uni-app-vite/dist/nvue/plugins/esbuild.js
+index afd8974..2623a42 100644
+--- a/node_modules/@dcloudio/uni-app-vite/dist/nvue/plugins/esbuild.js
++++ b/node_modules/@dcloudio/uni-app-vite/dist/nvue/plugins/esbuild.js
+@@ -98,10 +98,10 @@ function buildAppCss() {
+         return;
+     }
+     const appCssJsCode = fs_extra_1.default.readFileSync(appCssJsFilename, 'utf8');
+-    const appCssJsFn = new Function('exports', appCssJsCode.replace(`export default`, `exports=`));
+-    const exports = { styles: [] };
+-    appCssJsFn(exports);
+-    const appCssJsonCode = JSON.stringify(exports.styles);
++    const appCssJsFn = new Function('module', appCssJsCode.replace(`export default`, `module.exports=`));
++    const module = { exports: { styles: [] } };
++    appCssJsFn(module);
++    const appCssJsonCode = JSON.stringify(module.exports.styles);
+     if (process.env.UNI_NVUE_APP_STYLES === appCssJsonCode) {
+         return;
+     }
+diff --git a/node_modules/@dcloudio/uni-app-vite/dist/plugins/easycom.js b/node_modules/@dcloudio/uni-app-vite/dist/plugins/easycom.js
+index 544b4b4..1ce1438 100644
+--- a/node_modules/@dcloudio/uni-app-vite/dist/plugins/easycom.js
++++ b/node_modules/@dcloudio/uni-app-vite/dist/plugins/easycom.js
+@@ -15,9 +15,11 @@ function uniEasycomPlugin(options) {
+             if (!filter(id)) {
+                 return;
+             }
+-            const { filename, query } = (0, uni_cli_shared_1.parseVueRequest)(id);
+-            if (query.type !== 'template' &&
+-                (query.vue || !uni_cli_shared_1.EXTNAME_VUE_TEMPLATE.includes(path_1.default.extname(filename)))) {
++            const { filename } = (0, uni_cli_shared_1.parseVueRequest)(id);
++            if (!uni_cli_shared_1.EXTNAME_VUE_TEMPLATE.includes(path_1.default.extname(filename))) {
++                return;
++            }
++            if (!code.includes('_resolveComponent')) {
+                 return;
+             }
+             let i = 0;

@@ -1,0 +1,87 @@
+diff --git a/node_modules/@dcloudio/uni-app/dist/uni-app.cjs.js b/node_modules/@dcloudio/uni-app/dist/uni-app.cjs.js
+index d668d81..b7a151d 100644
+--- a/node_modules/@dcloudio/uni-app/dist/uni-app.cjs.js
++++ b/node_modules/@dcloudio/uni-app/dist/uni-app.cjs.js
+@@ -319,6 +319,22 @@ function initUtsClassName(moduleName, className, is_uni_modules) {
+     return '';
+ }
+ 
++Object.defineProperty(exports, 'capitalize', {
++  enumerable: true,
++  get: function () { return shared.capitalize; }
++});
++Object.defineProperty(exports, 'extend', {
++  enumerable: true,
++  get: function () { return shared.extend; }
++});
++Object.defineProperty(exports, 'hasOwn', {
++  enumerable: true,
++  get: function () { return shared.hasOwn; }
++});
++Object.defineProperty(exports, 'isPlainObject', {
++  enumerable: true,
++  get: function () { return shared.isPlainObject; }
++});
+ exports.formatAppLog = formatAppLog;
+ exports.formatH5Log = formatH5Log;
+ exports.getCurrentSubNVue = getCurrentSubNVue;
+diff --git a/node_modules/@dcloudio/uni-app/dist/uni-app.d.ts b/node_modules/@dcloudio/uni-app/dist/uni-app.d.ts
+index 7ba4879..8c80913 100644
+--- a/node_modules/@dcloudio/uni-app/dist/uni-app.d.ts
++++ b/node_modules/@dcloudio/uni-app/dist/uni-app.d.ts
+@@ -1,4 +1,8 @@
++import { capitalize } from '@vue/shared';
+ import type { ComponentInternalInstance } from '@vue/runtime-core';
++import { extend } from '@vue/shared';
++import { hasOwn } from '@vue/shared';
++import { isPlainObject } from '@vue/shared';
+ import { ref } from 'vue';
+ import { shallowRef } from 'vue';
+ 
+@@ -16,6 +20,8 @@ declare interface BackPressOption {
+     from: 'backbutton' | 'navigateBack';
+ }
+ 
++export { capitalize }
++
+ declare interface CustomShareAppMessage {
+     title?: string;
+     path?: string;
+@@ -28,6 +34,8 @@ declare interface CustomShareTimeline {
+     imageUrl?: string;
+ }
+ 
++export { extend }
++
+ export declare function formatAppLog(type: 'log' | 'info' | 'debug' | 'warn' | 'error', filename: string, ...args: unknown[]): void;
+ 
+ export declare function formatH5Log(type: keyof Console, filename: string, ...args: unknown[]): void;
+@@ -39,6 +47,8 @@ export declare function getCurrentSubNVue(): any;
+ 
+ export declare function getSsrGlobalData(): any;
+ 
++export { hasOwn }
++
+ export declare function initUtsClassName(moduleName: string, className: string, is_uni_modules: boolean): string;
+ 
+ export declare function initUtsIndexClassName(moduleName: string, is_uni_modules: boolean): string;
+@@ -51,6 +61,8 @@ export declare const initUtsProxyFunction: typeof initUtsStaticMethod;
+ 
+ declare function initUtsStaticMethod(async: boolean, opts: ProxyFunctionOptions): (...args: unknown[]) => unknown;
+ 
++export { isPlainObject }
++
+ declare type LaunchOption = LaunchShowOption;
+ 
+ declare interface LaunchShowOption {
+diff --git a/node_modules/@dcloudio/uni-app/dist/uni-app.es.js b/node_modules/@dcloudio/uni-app/dist/uni-app.es.js
+index 665925a..d1a82f0 100644
+--- a/node_modules/@dcloudio/uni-app/dist/uni-app.es.js
++++ b/node_modules/@dcloudio/uni-app/dist/uni-app.es.js
+@@ -1,5 +1,6 @@
+ import { shallowRef, ref, getCurrentInstance, isInSSRComponentSetup, injectHook } from 'vue';
+ import { hasOwn, isString, extend, capitalize, isPlainObject } from '@vue/shared';
++export { capitalize, extend, hasOwn, isPlainObject } from '@vue/shared';
+ import { sanitise, UNI_SSR_DATA, UNI_SSR_GLOBAL_DATA, UNI_SSR, ON_SHOW, ON_HIDE, ON_LAUNCH, ON_ERROR, ON_THEME_CHANGE, ON_PAGE_NOT_FOUND, ON_UNHANDLE_REJECTION, ON_INIT, ON_LOAD, ON_READY, ON_UNLOAD, ON_RESIZE, ON_BACK_PRESS, ON_PAGE_SCROLL, ON_TAB_ITEM_TAP, ON_REACH_BOTTOM, ON_PULL_DOWN_REFRESH, ON_SAVE_EXIT_STATE, ON_SHARE_TIMELINE, ON_ADD_TO_FAVORITES, ON_SHARE_APP_MESSAGE, ON_NAVIGATION_BAR_BUTTON_TAP, ON_NAVIGATION_BAR_SEARCH_INPUT_CHANGED, ON_NAVIGATION_BAR_SEARCH_INPUT_CLICKED, ON_NAVIGATION_BAR_SEARCH_INPUT_CONFIRMED, ON_NAVIGATION_BAR_SEARCH_INPUT_FOCUS_CHANGED } from '@dcloudio/uni-shared';
+ 
+ function getSSRDataType() {

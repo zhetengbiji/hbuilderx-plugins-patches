@@ -1,0 +1,158 @@
+diff --git a/node_modules/@dcloudio/uni-cli-shared/dist/hbx/env.js b/node_modules/@dcloudio/uni-cli-shared/dist/hbx/env.js
+index e4dd815..6597b1f 100644
+--- a/node_modules/@dcloudio/uni-cli-shared/dist/hbx/env.js
++++ b/node_modules/@dcloudio/uni-cli-shared/dist/hbx/env.js
+@@ -21,7 +21,7 @@ exports.isInHBuilderX = (0, uni_shared_1.once)(() => {
+     return false;
+ });
+ exports.runByHBuilderX = (0, uni_shared_1.once)(() => {
+-    return !!process.env.UNI_HBUILDERX_PLUGINS;
++    return !!process.env.UNI_HBUILDERX_PLUGINS && !!process.env.RUN_BY_HBUILDERX;
+ });
+ /**
+  * 增加 node_modules
+diff --git a/node_modules/@dcloudio/uni-cli-shared/dist/hbx/log.js b/node_modules/@dcloudio/uni-cli-shared/dist/hbx/log.js
+index 749edcc..619c9df 100644
+--- a/node_modules/@dcloudio/uni-cli-shared/dist/hbx/log.js
++++ b/node_modules/@dcloudio/uni-cli-shared/dist/hbx/log.js
+@@ -61,13 +61,16 @@ exports.h5ServeFormatter = {
+                 if (networkLogs.length) {
+                     // 延迟打印所有 network,仅最后一个 network 替换 ➜ 为 -，通知 hbx
+                     const len = networkLogs.length - 1;
+-                    networkLogs[len] = networkLogs[len].replace('➜', '-');
++                    networkLogs[len] = networkLogs[len].replace('* Network', '- Network');
+                     console.log(networkLogs.join('\n'));
+                     networkLogs.length = 0;
+                 }
+             });
+             return '';
+         }
++        if (msg.includes(SIGNAL_H5_LOCAL)) {
++            return msg.replace('➜ ', '-');
++        }
+         return msg.replace('➜ ', '*');
+     },
+ };
+diff --git a/node_modules/@dcloudio/uni-cli-shared/dist/json/app/manifest/checksystemwebview.js b/node_modules/@dcloudio/uni-cli-shared/dist/json/app/manifest/checksystemwebview.js
+index 39827c2..ae8dc15 100644
+--- a/node_modules/@dcloudio/uni-cli-shared/dist/json/app/manifest/checksystemwebview.js
++++ b/node_modules/@dcloudio/uni-cli-shared/dist/json/app/manifest/checksystemwebview.js
+@@ -3,10 +3,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.initCheckSystemWebview = void 0;
+ function initCheckSystemWebview(manifestJson) {
+     // 检查Android系统webview版本 || 下载X5后启动
+-    let plusWebview = manifestJson.plus.webView;
+-    if (plusWebview) {
+-        manifestJson.plus['uni-app'].webView = plusWebview;
++    let plusWebView = manifestJson.plus.webView;
++    if (plusWebView) {
++        manifestJson.plus['uni-app'].webView = plusWebView;
+         delete manifestJson.plus.webView;
+     }
++    if (process.env.NODE_ENV === 'development' && !plusWebView) {
++        manifestJson.plus['uni-app'].webView = {
++            minUserAgentVersion: '49.0',
++        };
++    }
+ }
+ exports.initCheckSystemWebview = initCheckSystemWebview;
+diff --git a/node_modules/@dcloudio/uni-cli-shared/dist/uni_modules.d.ts b/node_modules/@dcloudio/uni-cli-shared/dist/uni_modules.d.ts
+index 4714015..e4ebfe6 100644
+--- a/node_modules/@dcloudio/uni-cli-shared/dist/uni_modules.d.ts
++++ b/node_modules/@dcloudio/uni-cli-shared/dist/uni_modules.d.ts
+@@ -5,7 +5,7 @@ declare type Defines = {
+ interface Exports {
+     [name: string]: Define | Defines | false;
+ }
+-export declare function parseUniExtApis(): Injects;
++export declare function parseUniExtApis(vite?: boolean): Injects;
+ declare type Injects = {
+     [name: string]: string | string[] | false;
+ };
+@@ -30,6 +30,6 @@ declare type Injects = {
+  * @param define
+  * @returns
+  */
+-export declare function parseInjects(platform: UniApp.PLATFORM, source: string, exports?: Exports): Injects;
+-export declare function parseInject(source: string, globalObject: string, define: Define): Injects;
++export declare function parseInjects(vite: boolean | undefined, platform: UniApp.PLATFORM, source: string, exports?: Exports): Injects;
++export declare function parseInject(vite: boolean | undefined, source: string, globalObject: string, define: Define): Injects;
+ export {};
+diff --git a/node_modules/@dcloudio/uni-cli-shared/dist/uni_modules.js b/node_modules/@dcloudio/uni-cli-shared/dist/uni_modules.js
+index 3e5bda3..e1bea8b 100644
+--- a/node_modules/@dcloudio/uni-cli-shared/dist/uni_modules.js
++++ b/node_modules/@dcloudio/uni-cli-shared/dist/uni_modules.js
+@@ -7,7 +7,7 @@ exports.parseInject = exports.parseInjects = exports.parseUniExtApis = void 0;
+ const path_1 = __importDefault(require("path"));
+ const fs_extra_1 = __importDefault(require("fs-extra"));
+ const merge_1 = require("merge");
+-function parseUniExtApis() {
++function parseUniExtApis(vite = true) {
+     const uniModulesDir = path_1.default.resolve(process.env.UNI_INPUT_DIR, 'uni_modules');
+     if (!fs_extra_1.default.existsSync(uniModulesDir)) {
+         return {};
+@@ -25,7 +25,10 @@ function parseUniExtApis() {
+         }
+         const exports = (_b = (_a = JSON.parse(fs_extra_1.default.readFileSync(pkgPath, 'utf8'))) === null || _a === void 0 ? void 0 : _a.uni_modules) === null || _b === void 0 ? void 0 : _b['uni-ext-api'];
+         if (exports) {
+-            Object.assign(injects, parseInjects(process.env.UNI_PLATFORM === 'h5' ? 'web' : process.env.UNI_PLATFORM, `@/uni_modules/${uniModuleDir}`, exports));
++            Object.assign(injects, parseInjects(vite, process.env.UNI_PLATFORM === 'h5' ? 'web' : process.env.UNI_PLATFORM, `@/uni_modules/${uniModuleDir}` +
++                (vite || !process.env.UNI_UTS_PLATFORM
++                    ? ''
++                    : `/utssdk/${process.env.UNI_UTS_PLATFORM}/index`), exports));
+         }
+     });
+     return injects;
+@@ -52,7 +55,7 @@ exports.parseUniExtApis = parseUniExtApis;
+  * @param define
+  * @returns
+  */
+-function parseInjects(platform, source, exports = {}) {
++function parseInjects(vite = true, platform, source, exports = {}) {
+     let rootDefines = {};
+     Object.keys(exports).forEach((name) => {
+         if (name.startsWith('uni')) {
+@@ -69,18 +72,18 @@ function parseInjects(platform, source, exports = {}) {
+     }
+     const injects = {};
+     for (const key in rootDefines) {
+-        Object.assign(injects, parseInject(source, 'uni', rootDefines[key]));
++        Object.assign(injects, parseInject(vite, source, 'uni', rootDefines[key]));
+     }
+     return injects;
+ }
+ exports.parseInjects = parseInjects;
+-function parseInject(source, globalObject, define) {
++function parseInject(vite = true, source, globalObject, define) {
+     const injects = {};
+     if (define === false) {
+     }
+     else if (typeof define === 'string') {
+         // {'uni.getBatteryInfo' : '@dcloudio/uni-getbatteryinfo'}
+-        injects[globalObject + '.' + define] = source;
++        injects[globalObject + '.' + define] = vite ? source : [source, 'default'];
+     }
+     else if (Array.isArray(define)) {
+         // {'uni.getBatteryInfo' : ['@dcloudio/uni-getbatteryinfo','getBatteryInfo]}
+diff --git a/node_modules/@dcloudio/uni-cli-shared/dist/vite/utils/url.js b/node_modules/@dcloudio/uni-cli-shared/dist/vite/utils/url.js
+index 41bb428..7d7a054 100644
+--- a/node_modules/@dcloudio/uni-cli-shared/dist/vite/utils/url.js
++++ b/node_modules/@dcloudio/uni-cli-shared/dist/vite/utils/url.js
+@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
+ };
+ Object.defineProperty(exports, "__esModule", { value: true });
+ exports.isJsFile = exports.cleanUrl = exports.hashRE = exports.queryRE = exports.isInternalRequest = exports.ENV_PUBLIC_PATH = exports.CLIENT_PUBLIC_PATH = exports.VALID_ID_PREFIX = exports.FS_PREFIX = exports.isImportRequest = exports.parseVueRequest = void 0;
++const shared_1 = require("@vue/shared");
+ const path_1 = __importDefault(require("path"));
+ const constants_1 = require("../../constants");
+ function parseVueRequest(id) {
+@@ -59,7 +60,8 @@ function isJsFile(id) {
+     if (isJs) {
+         return true;
+     }
+-    const isVueJs = constants_1.EXTNAME_VUE.includes(path_1.default.extname(filename)) && !query.vue;
++    const isVueJs = constants_1.EXTNAME_VUE.includes(path_1.default.extname(filename)) &&
++        (!query.vue || query.setup || (0, shared_1.hasOwn)(query, 'lang.ts'));
+     if (isVueJs) {
+         return true;
+     }

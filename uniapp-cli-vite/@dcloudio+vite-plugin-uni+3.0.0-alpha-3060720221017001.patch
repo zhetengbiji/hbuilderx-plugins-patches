@@ -1,0 +1,22 @@
+diff --git a/node_modules/@dcloudio/vite-plugin-uni/dist/cli/server.js b/node_modules/@dcloudio/vite-plugin-uni/dist/cli/server.js
+index c8cfd93..98d904b 100644
+--- a/node_modules/@dcloudio/vite-plugin-uni/dist/cli/server.js
++++ b/node_modules/@dcloudio/vite-plugin-uni/dist/cli/server.js
+@@ -155,7 +155,7 @@ function printServerUrls(hostname, protocol, port, base, info) {
+             .map((detail) => {
+             const type = detail.address.includes('127.0.0.1')
+                 ? '  - Local:   '
+-                : '  - Network: ';
++                : '  * Network: ';
+             const host = detail.address.replace('127.0.0.1', hostname.name);
+             const url = `${protocol}://${host}:${picocolors_1.default.bold(port)}${base}`;
+             return `${type} ${picocolors_1.default.cyan(url)}`;
+@@ -165,7 +165,7 @@ function printServerUrls(hostname, protocol, port, base, info) {
+         })
+             .forEach((msg, index, arr) => {
+             if (arr.length - 1 === index) {
+-                info(msg.replace('➜', '-'));
++                info(msg.replace('* Network', '- Network'));
+             }
+             else {
+                 info(msg);
