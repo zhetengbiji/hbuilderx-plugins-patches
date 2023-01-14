@@ -1,0 +1,27 @@
+diff --git a/node_modules/@dcloudio/uni-template-compiler/lib/script/traverse/resolve-scoped-slots.js b/node_modules/@dcloudio/uni-template-compiler/lib/script/traverse/resolve-scoped-slots.js
+index 8b12d66..f5a946c 100644
+--- a/node_modules/@dcloudio/uni-template-compiler/lib/script/traverse/resolve-scoped-slots.js
++++ b/node_modules/@dcloudio/uni-template-compiler/lib/script/traverse/resolve-scoped-slots.js
+@@ -28,6 +28,9 @@ function needSlotMode (path, ids) {
+         } else if (!path.scope.hasBinding(name) && !METHOD_BUILT_IN.includes(name)) {
+           need = true
+         }
++      } else if (path.key === 'property' && name === 'length') {
++        // 微信小程序平台无法观测 Array length 访问：https://developers.weixin.qq.com/community/develop/doc/000c8ee47d87a0d5b6685a8cb57000
++        need = true
+       }
+     }
+   })
+diff --git a/node_modules/@dcloudio/uni-template-compiler/lib/script/traverse/visitor.js b/node_modules/@dcloudio/uni-template-compiler/lib/script/traverse/visitor.js
+index 53aa06c..889473b 100644
+--- a/node_modules/@dcloudio/uni-template-compiler/lib/script/traverse/visitor.js
++++ b/node_modules/@dcloudio/uni-template-compiler/lib/script/traverse/visitor.js
+@@ -157,7 +157,7 @@ module.exports = {
+         newPath = path.findParent((path) => path.isLogicalExpression())
+       }
+       path.skip()
+-      if (path.findParent((path) => path.shouldSkip)) {
++      if (path.findParent((path) => path.shouldSkip || (this.options.scopedSlotsCompiler === 'legacy' && path.isCallExpression() && path.node.callee.name === METHOD_RESOLVE_SCOPED_SLOTS))) {
+         return
+       }
+       path.replaceWith(getMemberExpr(path, IDENTIFIER_GLOBAL, path.node, this))
