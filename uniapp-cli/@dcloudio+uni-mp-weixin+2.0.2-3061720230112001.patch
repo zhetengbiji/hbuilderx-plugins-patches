@@ -19,14 +19,66 @@ index dd95484..a457bf8 100644
  var api = /*#__PURE__*/Object.freeze({
    __proto__: null,
 diff --git a/node_modules/@dcloudio/uni-mp-weixin/dist/wx.js b/node_modules/@dcloudio/uni-mp-weixin/dist/wx.js
-index 3d54e1c..c117454 100644
+index 3d54e1c..e00168d 100644
 --- a/node_modules/@dcloudio/uni-mp-weixin/dist/wx.js
 +++ b/node_modules/@dcloudio/uni-mp-weixin/dist/wx.js
-@@ -9,6 +9,7 @@ function isFn(fn) {
- }
- 
+@@ -1,14 +1,5 @@
+-const hasOwnProperty = Object.prototype.hasOwnProperty
+-
+-function hasOwn(obj, key) {
+-  return hasOwnProperty.call(obj, key)
+-}
+-
+-function isFn(fn) {
+-  return typeof fn === 'function'
+-}
+-
  const objectKeys = [
 +  'qy',
    'env',
    'error',
    'version',
+@@ -16,23 +7,29 @@ const objectKeys = [
+   'cloud',
+   'serviceMarket',
+   'router',
+-  'worklet'
++  'worklet',
+ ]
+-const oldWx = globalThis[['w', 'x'].join('')]
++
++const target = typeof globalThis !== 'undefined' ? globalThis : (function() {
++  return this
++})()
++
++const key = ['w', 'x'].join('')
++const oldWx = target[key]
++
++function isWxKey(key) {
++  return objectKeys.indexOf(key) > -1 || typeof oldWx[key] === 'function'
++}
+ 
+ function initWx() {
+-  const WxProxyHandlers = {
+-    get(target, key) {
+-      if (hasOwn(target, key)) {
+-        return target[key]
+-      }
+-      if (objectKeys.indexOf(key) > -1 || isFn(oldWx[key])) {
+-        return oldWx[key]
+-      }
++  const newWx = {}
++  for (const key in oldWx) {
++    if (isWxKey(key)) {
++      // TODO wrapper function
++      newWx[key] = oldWx[key]
+     }
+   }
+-  return new Proxy({}, WxProxyHandlers)
++  return newWx
+ }
+-const wxProxy = initWx()
+-globalThis[['w', 'x'].join('')] = wxProxy
+-export default wxProxy
++target[key] = initWx()
++export default target[key]

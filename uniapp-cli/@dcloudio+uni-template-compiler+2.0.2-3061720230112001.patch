@@ -1,3 +1,52 @@
+diff --git a/node_modules/@dcloudio/uni-template-compiler/lib/script/traverse/member-expr.js b/node_modules/@dcloudio/uni-template-compiler/lib/script/traverse/member-expr.js
+index fe9100f..fbf4136 100644
+--- a/node_modules/@dcloudio/uni-template-compiler/lib/script/traverse/member-expr.js
++++ b/node_modules/@dcloudio/uni-template-compiler/lib/script/traverse/member-expr.js
+@@ -5,7 +5,8 @@ const {
+   VAR_ROOT,
+   IDENTIFIER_METHOD,
+   IDENTIFIER_FILTER,
+-  IDENTIFIER_GLOBAL
++  IDENTIFIER_GLOBAL,
++  METHOD_RENDER_LIST
+ } = require('../../constants')
+ 
+ function isMatch (name, forItem, forIndex) {
+@@ -19,8 +20,19 @@ function findScoped (path, test, state) {
+   const scoped = state.scoped.find(scoped => {
+     const {
+       forItem,
+-      forIndex
++      forIndex,
++      path: listPath
+     } = scoped
++    const funPath = path.findParent(path => path.isFunctionExpression() && path.parentPath.node.callee.name === METHOD_RENDER_LIST)
++    if (funPath && funPath.parentPath === listPath) {
++      // TODO 为兼容历史结构仅在当前 list 父级存在 v-if 返回
++      const parent = listPath.findParent(path => path.isFunctionExpression() || path.isConditionalExpression())
++      if (parent && parent.isConditionalExpression()) {
++        return true
++      }
++    } else {
++      return false
++    }
+     let match = false
+     path.traverse({
+       noScope: true,
+diff --git a/node_modules/@dcloudio/uni-template-compiler/lib/script/traverse/render-list.js b/node_modules/@dcloudio/uni-template-compiler/lib/script/traverse/render-list.js
+index ae7c662..7cb9f90 100644
+--- a/node_modules/@dcloudio/uni-template-compiler/lib/script/traverse/render-list.js
++++ b/node_modules/@dcloudio/uni-template-compiler/lib/script/traverse/render-list.js
+@@ -136,7 +136,8 @@ module.exports = function traverseRenderList (path, state) {
+     forExtra: getForExtra(forItem, forIndex, path, state),
+     propertyArray: [],
+     declarationArray: [],
+-    renderSlotStatementArray: []
++    renderSlotStatementArray: [],
++    path
+   }
+ 
+   const forState = {
 diff --git a/node_modules/@dcloudio/uni-template-compiler/lib/script/traverse/resolve-scoped-slots.js b/node_modules/@dcloudio/uni-template-compiler/lib/script/traverse/resolve-scoped-slots.js
 index 8b12d66..f5a946c 100644
 --- a/node_modules/@dcloudio/uni-template-compiler/lib/script/traverse/resolve-scoped-slots.js
