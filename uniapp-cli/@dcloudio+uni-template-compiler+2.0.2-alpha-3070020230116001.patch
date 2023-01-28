@@ -1,0 +1,17 @@
+diff --git a/node_modules/@dcloudio/uni-template-compiler/lib/script/traverse/member-expr.js b/node_modules/@dcloudio/uni-template-compiler/lib/script/traverse/member-expr.js
+index fbf4136..44dea77 100644
+--- a/node_modules/@dcloudio/uni-template-compiler/lib/script/traverse/member-expr.js
++++ b/node_modules/@dcloudio/uni-template-compiler/lib/script/traverse/member-expr.js
+@@ -23,7 +23,11 @@ function findScoped (path, test, state) {
+       forIndex,
+       path: listPath
+     } = scoped
+-    const funPath = path.findParent(path => path.isFunctionExpression() && path.parentPath.node.callee.name === METHOD_RENDER_LIST)
++    const funPath = path.findParent(path =>
++      path.isFunctionExpression() &&
++      t.isCallExpression(path.parentPath) &&
++      path.parentPath.node.callee.name === METHOD_RENDER_LIST
++    )
+     if (funPath && funPath.parentPath === listPath) {
+       // TODO 为兼容历史结构仅在当前 list 父级存在 v-if 返回
+       const parent = listPath.findParent(path => path.isFunctionExpression() || path.isConditionalExpression())
